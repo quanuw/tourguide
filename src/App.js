@@ -12,6 +12,21 @@ const PATH_API_KEY= 'apikey=';
 const API_KEY = '';
 // const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
 
+const list = [
+  {
+    artist: "Fall Out Boy",
+    venue: "Paramount",
+    date: "04-09-18",
+    price: "10.00",
+  },
+  {
+    artist: "Taylor Swift",
+    venue: "Paramount",
+    date: "04-09-18",
+    price: "10.00",
+  }
+];
+
 class App extends Component {
 
   constructor(props) {
@@ -83,6 +98,7 @@ class App extends Component {
           > 
             Search
           </Search>
+          <Cards/>
         </div>
       </div>
     );
@@ -112,6 +128,27 @@ const Search = ({
     onSubmit: PropTypes.func.isRequired,
     children: PropTypes.node.isRequired,
   }
+
+const Cards = ({
+
+}) =>
+  <div className="cards">
+    {list.map(item =>
+      <div className="card">
+        <div className="card-venue">
+          <span className="venue">{item.venue}</span>
+        </div>
+        <div class="card-info">
+          <span>{item.date}</span>
+          <span>{item.price}</span>
+        </div>
+      </div>
+    )}
+  </div>
+
+
+  
+  
 
 
 export default App;
