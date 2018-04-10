@@ -21,9 +21,9 @@ const list = [
   },
   {
     artist: "Taylor Swift",
-    venue: "Paramount",
+    venue: "Nemos",
     date: "04-09-18",
-    price: "10.00",
+    price: "15.00",
   }
 ];
 
@@ -134,7 +134,7 @@ const Cards = ({
 }) =>
   <div className="cards">
     {list.map(item =>
-      <div className="card">
+      <div key={item.objectID} className="card">
         <div className="card-venue">
           <span className="venue">{item.venue}</span>
         </div>
