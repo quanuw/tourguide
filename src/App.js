@@ -165,20 +165,20 @@ class Card extends Component {
 
  
 
-  stringToHash(s) {
-    let hash = 5381;
-    for (let i = 0; i < s.length; i++) {
-      hash = ((hash << 5) + hash) + s.charCodeAt(i);
+  stringToHash(str) {
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     return hash;
   }
 
-  hashToRGB(s) {
-    let hash = this.stringToHash(s);
-    let r = (hash & 0xFF0000) >> 16;
-    let g = (hash & 0x00FF00) >> 8;
-    let b = hash & 0x0000FF;
-    return "#" + ("0" + r.toString(16)).substr(-2) + ("0" + g.toString(16)).substr(-2) + ("0" + b.toString(16)).substr(-2);
+  hashToRGB(i) {
+     var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
   }
   
 
@@ -188,8 +188,10 @@ class Card extends Component {
       date,
       price,
     } = this.props;
-    const color = this.hashToRGB(this.stringToHash(venue));
 
+    const color = '#' + this.hashToRGB(this.stringToHash(venue));
+    console.log(color);
+    
     return(
       <div className="card" style={{backgroundColor: color}}>
         <div className="card-venue">
