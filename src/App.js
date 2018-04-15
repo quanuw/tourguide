@@ -59,6 +59,7 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.fetchTours = this.fetchTours.bind(this);
+    this.needsToSearchTours = this.needsToSearchTours.bind(this);
   }
 
   fetchTours(searchTerm) {
@@ -79,13 +80,19 @@ class App extends Component {
     this.setState({ searchTerm: event.target.value });
   }
 
+  needsToSearchTours(searchTerm) {
+    return !this.state.results || !this.state.results[searchTerm];
+  }
+
   onSearchSubmit(event) {
     const { searchTerm } = this.state;
     this.setState({ searchKey : searchTerm });
     console.log(this.state.searchKey);
     // TODO: Can't fetch. Need an API KEY from song kick. Use const list for now.
     // this.fetchTours(searchTerm);
-    this.setTours(searchTerm);
+    if (this.needsToSearchTours(searchTerm)) {
+      this.setTours(searchTerm);
+    }
     event.preventDefault();
   }
 
@@ -191,7 +198,6 @@ const Search = ({
 // TODO: How to change background color based on venue hash?
 const Cards = ({
   list,
-  key,
 }) => 
   <div className="cards">
     {list.map(item => 
