@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
 import './App.css';
 
 const DEFAULT_QUERY = 'wtf';
@@ -40,7 +42,8 @@ const updateSearchToursState = (result) => (prevState) => {
   return {
     results: { ...results,
       [searchKey]: updatedResultsPages
-    }
+    },
+    isLoading: false
   };
 }
 
@@ -54,6 +57,7 @@ class App extends Component {
       searchTerm: DEFAULT_QUERY,
       searchKey: 'LOLOL',
       error: null,
+      isLoading: false,
     }
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -63,6 +67,7 @@ class App extends Component {
   }
 
   fetchTours(searchTerm) {
+    this.setState({ isLoading: true });
     axios(`${PATH_BASE}${PATH_ARTISTS}${searchTerm}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
       .then(result => this.setTours(result.data))
       .catch(error => this.setState({ error }));
@@ -108,6 +113,7 @@ class App extends Component {
       searchKey,
       results,
       error,
+      isLoading,
     } = this.state;
 
     const list = (
@@ -125,11 +131,11 @@ class App extends Component {
           > 
             Search
           </Search>
-          {results && 
-            <Cards
-              list={list}
-            >
-            </Cards>
+          { isLoading ? <Loading/> 
+            : <Cards
+                list={list}
+              >
+              </Cards>
           }
         </div>
       </div>
@@ -234,6 +240,12 @@ class Card extends Component {
     );
   }
 }
+
+const Loading = () =>
+  <div>
+    <FontAwesomeIcon id="loading-icon" icon={faSpinner} spin />
+  </div>
+
 
 export default App;
 
