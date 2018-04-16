@@ -97,41 +97,7 @@ class App extends Component {
   }
 
   setTours(result) {
-    //const { resultPage } = result;
-    // const { searchKey, results } = this.state;
-    // const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
-    // const oldResultPages = results && results[searchKey]
-    // ? results[searchKey]
-    // : [];
-  
-
-    // const updatedResultsPages = [
-    //   ...oldResultPages,
-    //   ...resultPage
-    // ];
-
-    // this.setState(prevState => {
-    //   const { searchKey, results } = this.state;
-    //   const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
-    //   const oldResultPages = results && results[searchKey]
-    //     ? results[searchKey]
-    //     : [];
-    //   const updatedResultsPages = [
-    //     ...oldResultPages,
-    //     ...resultPage
-    //     ];
-    //   return {
-    //     results: { ...results,
-    //       [searchKey]: updatedResultsPages
-    //     }
-    //   };
-    // });
     this.setState(updateSearchToursState(result));
-    // console.log(oldResultPages);
-    // console.log(resultPage);
-    // console.log(updatedResultsPages);
-    // console.log(searchKey);
-    console.log(this.state.results);
   }
 
 
@@ -214,8 +180,6 @@ const Cards = ({
 
   Cards.PropTypes = {
     list: PropTypes.array.isRequired
-  //   hashFunc: PropTypes.func,
-  //   RGBFunc: PropTypes.func,
   }
 
 class Card extends Component {
@@ -228,15 +192,15 @@ class Card extends Component {
   }
 
   stringToHash(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
        hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     return hash;
   }
 
   hashToHex(i) {
-     var c = (i & 0x00FFFFFF)
+     let c = (i & 0x00FFFFFF)
         .toString(16)
         .toUpperCase();
 
@@ -245,6 +209,7 @@ class Card extends Component {
   
   render() {
     const {
+      key,
       venue,
       date,
       price,
@@ -254,7 +219,7 @@ class Card extends Component {
     console.log(color);
 
     return(
-      <div className="card" style={{backgroundColor: color}}>
+      <div key={key} className="card" style={{backgroundColor: color}}>
         <div className="card-venue">
             <span className="venue">{venue}</span>
         </div>
@@ -271,3 +236,9 @@ class Card extends Component {
 }
 
 export default App;
+
+export {
+  Search,
+  Cards,
+  Card,
+};

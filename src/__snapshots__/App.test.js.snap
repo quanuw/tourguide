@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App has a valid snapshot 1`] = `
+<div
+  className="App"
+>
+  <div
+    className="interactions"
+  >
+    <form
+      onSubmit={[Function]}
+    >
+      <input
+        onChange={[Function]}
+        type="text"
+        value="wtf"
+      />
+      <button
+        type="submit"
+      >
+        Search
+      </button>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`Card has a valid snapshot 1`] = `
+<div
+  className="cards"
+>
+  <div
+    className="card"
+    style={
+      Object {
+        "backgroundColor": "#000031",
+      }
+    }
+  >
+    <div
+      className="card-venue"
+    >
+      <span
+        className="venue"
+      >
+        1
+      </span>
+    </div>
+    <div
+      className="card-info"
+    >
+      <span
+        className="date"
+      >
+        DATE: 
+        1
+      </span>
+      <span
+        className="price"
+      >
+        PRICE: 
+        1
+      </span>
+      <span
+        className="buy-link"
+      >
+        <a
+          href="https://www.songkick.com/"
+        >
+          BUY TICKET
+        </a>
+      </span>
+    </div>
+  </div>
+  <div
+    className="card"
+    style={
+      Object {
+        "backgroundColor": "#000032",
+      }
+    }
+  >
+    <div
+      className="card-venue"
+    >
+      <span
+        className="venue"
+      >
+        2
+      </span>
+    </div>
+    <div
+      className="card-info"
+    >
+      <span
+        className="date"
+      >
+        DATE: 
+        2
+      </span>
+      <span
+        className="price"
+      >
+        PRICE: 
+        2
+      </span>
+      <span
+        className="buy-link"
+      >
+        <a
+          href="https://www.songkick.com/"
+        >
+          BUY TICKET
+        </a>
+      </span>
+    </div>
+  </div>
+  ;
+</div>
+`;
+
+exports[`Cards has a valid snapshot 1`] = `
+<form
+  onSubmit={undefined}
+>
+  <input
+    onChange={undefined}
+    type="text"
+    value={undefined}
+  />
+  <button
+    type="submit"
+  >
+    Search
+  </button>
+</form>
+`;
+
+exports[`Search has a valid snapshot 1`] = `
+<form
+  onSubmit={undefined}
+>
+  <input
+    onChange={undefined}
+    type="text"
+    value={undefined}
+  />
+  <button
+    type="submit"
+  >
+    Search
+  </button>
+</form>
+`;
