@@ -11,7 +11,7 @@ const PATH_BASE = 'http://api.songkick.com/api/3.0/';
 const PATH_ARTISTS = 'artists/';
 const PATH_FORMAT = 'calendar.json';
 const PATH_API_KEY= 'apikey=';
-const API_KEY = '';
+const API_KEY = 'GfkmyNpagiIxeyzZ';
 // const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
 
 const list = [
@@ -48,7 +48,7 @@ const updateSearchToursState = (result) => (prevState) => {
 }
 
 class App extends Component {
-
+  _isMounted = false;
   constructor(props) {
     super(props);
 
@@ -66,19 +66,33 @@ class App extends Component {
     this.needsToSearchTours = this.needsToSearchTours.bind(this);
   }
 
+  // TODO: Need to fetch twice.
+  // 1. Get correct id of artist
+  // 2. Get tour data with the id
   fetchTours(searchTerm) {
     this.setState({ isLoading: true });
     axios(`${PATH_BASE}${PATH_ARTISTS}${searchTerm}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
-      .then(result => this.setTours(result.data))
-      .catch(error => this.setState({ error }));
+      .then(result => this._isMounted && console.log(result.data))
+      .catch(error => this._isMounted && this.setState({ error }));
       console.log(searchTerm);
       console.log(this._isMounted);
+
+    // find artist id:
+    // TODO: create path constants.
+    axios('http://api.songkick.com/api/3.0/search/artists.json?apikey=GfkmyNpagiIxeyzZ&query=eminem') 
+      .then(result => this._isMounted && this.setTours(result.data))
+      .catch(error => this._isMounted && console.log(error));
   }
 
   componentDidMount() {
+    this._isMounted = true;
     console.log("Component mounted");
     const { searchTerm } = this.state;
     this.setState({ searchKey : searchTerm});
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   onSearchChange(event) {
@@ -94,15 +108,20 @@ class App extends Component {
     this.setState({ searchKey : searchTerm });
     console.log(this.state.searchKey);
     // TODO: Can't fetch. Need an API KEY from song kick. Use const list for now.
-    // this.fetchTours(searchTerm);
-    if (this.needsToSearchTours(searchTerm)) {
-      this.setTours(searchTerm);
-    }
+    this.fetchTours(searchTerm);
+    // if (this.needsToSearchTours(searchTerm)) {
+    //   this.setTours(searchTerm);
+    // }
     event.preventDefault();
   }
 
   setTours(result) {
-    this.setState(updateSearchToursState(result));
+    console.log(result);
+    const { searchTerm } = this.state;
+    console.log(searchTerm.toLowerCase());
+    const res = result.resultsPage.results.artist.filter(item => item.displayName.toLowerCase() == searchTerm.toLowerCase());
+    console.log(res);
+    //this.setState(updateSearchToursState(result));
   }
 
 
