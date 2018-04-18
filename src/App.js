@@ -66,22 +66,26 @@ class App extends Component {
     this.needsToSearchTours = this.needsToSearchTours.bind(this);
   }
 
+  // find artist id:
+  // TODO: Create path constants
+  fetchArtistId(searchTerm) {
+    this.setState({ isLoading: true });
+    axios('http://api.songkick.com/api/3.0/search/artists.json?apikey=GfkmyNpagiIxeyzZ&query=eminem') 
+      .then(result => this._isMounted && this.fetchTours(result.data))
+      .catch(error => this._isMounted && console.log(error));
+  }
   // TODO: Need to fetch twice.
   // 1. Get correct id of artist
   // 2. Get tour data with the id
-  fetchTours(searchTerm) {
-    this.setState({ isLoading: true });
-    axios(`${PATH_BASE}${PATH_ARTISTS}${searchTerm}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
-      .then(result => this._isMounted && console.log(result.data))
-      .catch(error => this._isMounted && this.setState({ error }));
-      console.log(searchTerm);
-      console.log(this._isMounted);
-
-    // find artist id:
-    // TODO: create path constants.
-    axios('http://api.songkick.com/api/3.0/search/artists.json?apikey=GfkmyNpagiIxeyzZ&query=eminem') 
-      .then(result => this._isMounted && this.setTours(result.data))
-      .catch(error => this._isMounted && console.log(error));
+  fetchTours(result) {
+    const { searchTerm } = this.state;
+    const res = result.resultsPage.results.artist.filter(item => item.displayName.toLowerCase() == searchTerm.toLowerCase());
+    console.log(res[0].id);
+    // axios(`${PATH_BASE}${PATH_ARTISTS}${artistId}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
+    //   .then(result => this._isMounted && console.log(result.data))
+    //   .catch(error => this._isMounted && this.setState({ error }));
+    //   console.log(artistId);
+    //   console.log(this._isMounted);
   }
 
   componentDidMount() {
@@ -108,7 +112,7 @@ class App extends Component {
     this.setState({ searchKey : searchTerm });
     console.log(this.state.searchKey);
     // TODO: Can't fetch. Need an API KEY from song kick. Use const list for now.
-    this.fetchTours(searchTerm);
+    this.fetchArtistId(searchTerm);
     // if (this.needsToSearchTours(searchTerm)) {
     //   this.setTours(searchTerm);
     // }
