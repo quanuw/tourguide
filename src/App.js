@@ -11,6 +11,7 @@ const PATH_BASE = 'http://api.songkick.com/api/3.0/';
 const PATH_ARTISTS = 'artists/';
 const PATH_FORMAT = 'calendar.json';
 const PATH_API_KEY= 'apikey=';
+const PATH_QUERY = 'query='
 const API_KEY = 'GfkmyNpagiIxeyzZ';
 // const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
 
@@ -30,21 +31,35 @@ const list = [
 ];
 
 const updateSearchToursState = (result) => (prevState) => {
-  const { searchKey, results } = prevState;
-  const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
-  const oldResultPages = results && results[searchKey]
-    ? results[searchKey]
-    : [];
-  const updatedResultsPages = [
-    ...oldResultPages,
-    ...resultPage
-    ];
-  return {
-    results: { ...results,
-      [searchKey]: updatedResultsPages
-    },
-    isLoading: false
-  };
+  // const { searchKey, results } = prevState;
+  // const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
+  console.log(result.resultsPage.results.event);
+  const events = result.resultsPage.results.event;
+  // Put all venue objects from each event object into an array
+  // refer to: https://stackoverflow.com/questions/38750705/filter-object-properties-by-key-in-es6/38750895
+  console.log(Object.keys(events));
+  const venues = events.map(event =>
+    Object.keys(event)
+    .filter(key => key === 'venue') // filter venue object from event
+    .reduce((obj, key) => { // make new venue object
+      obj[key] = event[key];
+      return obj;
+    }, {})
+  );
+  console.log(venues); // should be an array of venue objects
+  // const oldResultPages = results && results[searchKey]
+  //   ? results[searchKey]
+  //   : [];
+  // const updatedResultsPages = [
+  //   ...oldResultPages,
+  //   ...resultPage
+  //   ];
+  // return {
+  //   results: { ...results,
+  //     [searchKey]: updatedResultsPages
+  //   },
+  //   isLoading: false
+  // };
 }
 
 class App extends Component {
@@ -70,22 +85,23 @@ class App extends Component {
   // TODO: Create path constants
   fetchArtistId(searchTerm) {
     this.setState({ isLoading: true });
-    axios('http://api.songkick.com/api/3.0/search/artists.json?apikey=GfkmyNpagiIxeyzZ&query=eminem') 
+    axios(`${PATH_BASE}search/artists.json?${PATH_API_KEY}${API_KEY}&${PATH_QUERY}${searchTerm}`)
       .then(result => this._isMounted && this.fetchTours(result.data))
-      .catch(error => this._isMounted && console.log(error));
+      .catch(error => this._isMounted && this.setState({ error }));
   }
+
   // TODO: Need to fetch twice.
   // 1. Get correct id of artist
   // 2. Get tour data with the id
-  fetchTours(result) {
+  fetchTours(artistResult) {
     const { searchTerm } = this.state;
-    const res = result.resultsPage.results.artist.filter(item => item.displayName.toLowerCase() == searchTerm.toLowerCase());
-    console.log(res[0].id);
-    // axios(`${PATH_BASE}${PATH_ARTISTS}${artistId}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
-    //   .then(result => this._isMounted && console.log(result.data))
-    //   .catch(error => this._isMounted && this.setState({ error }));
-    //   console.log(artistId);
-    //   console.log(this._isMounted);
+    const res = artistResult.resultsPage.results.artist.filter(item => item.displayName.toLowerCase() == searchTerm.toLowerCase());
+    const artistId = res[0].id;
+    axios(`${PATH_BASE}${PATH_ARTISTS}${artistId}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
+      .then(result => this._isMounted && this.setTours(result.data))
+      .catch(error => this._isMounted && this.setState({ error }));
+      console.log(artistId);
+      console.log(this._isMounted);
   }
 
   componentDidMount() {
@@ -121,13 +137,8 @@ class App extends Component {
 
   setTours(result) {
     console.log(result);
-    const { searchTerm } = this.state;
-    console.log(searchTerm.toLowerCase());
-    const res = result.resultsPage.results.artist.filter(item => item.displayName.toLowerCase() == searchTerm.toLowerCase());
-    console.log(res);
-    //this.setState(updateSearchToursState(result));
+    this.setState(updateSearchToursState(result));
   }
-
 
   render() {
 
