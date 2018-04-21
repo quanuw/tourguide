@@ -32,29 +32,8 @@ const list = [
 
 const updateSearchToursState = (result) => (prevState) => {
   const { searchKey, results } = prevState;
-  // const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
-  console.log(result.resultsPage.results.event);
   const events = result.resultsPage.results.event;
-  // Put all venue objects from each event object into an array
-  // refer to: https://stackoverflow.com/questions/38750705/filter-object-properties-by-key-in-es6/38750895
-  // Decided to use event objects instead. No need to extract venues.
-  // console.log(Object.keys(events[0]));
-  // const venues = events.map(event =>
-  //   Object.keys(event)
-  //   .filter(key => key === 'venue') // filter venue object from event
-  //   .reduce((obj, key) => { // make new venue object
-  //     obj[key] = event[key];
-  //     return obj;
-  //   }, {})
-  // );
 
-  // const oldResultPages = results && results[searchKey]
-  //   ? results[searchKey]
-  //   : [];
-  // const updatedResultsPages = [
-  //   ...oldResultPages,
-  //   ...resultPage
-  //   ];
   return {
     results: { ...results,
       [searchKey]: events
