@@ -31,22 +31,23 @@ const list = [
 ];
 
 const updateSearchToursState = (result) => (prevState) => {
-  // const { searchKey, results } = prevState;
+  const { searchKey, results } = prevState;
   // const resultPage = list.filter(item => item.artist.toLowerCase() === result.toLowerCase());
   console.log(result.resultsPage.results.event);
   const events = result.resultsPage.results.event;
   // Put all venue objects from each event object into an array
   // refer to: https://stackoverflow.com/questions/38750705/filter-object-properties-by-key-in-es6/38750895
-  console.log(Object.keys(events));
-  const venues = events.map(event =>
-    Object.keys(event)
-    .filter(key => key === 'venue') // filter venue object from event
-    .reduce((obj, key) => { // make new venue object
-      obj[key] = event[key];
-      return obj;
-    }, {})
-  );
-  console.log(venues); // should be an array of venue objects
+  // Decided to use event objects instead. No need to extract venues.
+  // console.log(Object.keys(events[0]));
+  // const venues = events.map(event =>
+  //   Object.keys(event)
+  //   .filter(key => key === 'venue') // filter venue object from event
+  //   .reduce((obj, key) => { // make new venue object
+  //     obj[key] = event[key];
+  //     return obj;
+  //   }, {})
+  // );
+
   // const oldResultPages = results && results[searchKey]
   //   ? results[searchKey]
   //   : [];
@@ -54,12 +55,12 @@ const updateSearchToursState = (result) => (prevState) => {
   //   ...oldResultPages,
   //   ...resultPage
   //   ];
-  // return {
-  //   results: { ...results,
-  //     [searchKey]: updatedResultsPages
-  //   },
-  //   isLoading: false
-  // };
+  return {
+    results: { ...results,
+      [searchKey]: events
+    },
+    isLoading: false
+  };
 }
 
 class App extends Component {
@@ -128,10 +129,11 @@ class App extends Component {
     this.setState({ searchKey : searchTerm });
     console.log(this.state.searchKey);
     // TODO: Can't fetch. Need an API KEY from song kick. Use const list for now.
-    this.fetchArtistId(searchTerm);
-    // if (this.needsToSearchTours(searchTerm)) {
-    //   this.setTours(searchTerm);
-    // }
+    
+    if (this.needsToSearchTours(searchTerm)) {
+      this.fetchArtistId(searchTerm);
+      console.log('fetch');
+    }
     event.preventDefault();
   }
 
@@ -210,9 +212,9 @@ const Cards = ({
 
       <Card
         key={item.objectID}
-        venue={item.venue}
-        date={item.date}
-        price={item.price}
+        venue={item.venue.displayName}
+        date={item.start.date}
+        //price={item.price}
       />
 
     )};
@@ -265,7 +267,7 @@ class Card extends Component {
         </div>
         <div className="card-info">
           <span className="date">DATE: {date}</span>
-          <span className="price">PRICE: {price}</span>
+          <span className="price">PRICE: 10</span>
           <span className="buy-link">
             <a href="https://www.songkick.com/">BUY TICKET</a>
           </span>
