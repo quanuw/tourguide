@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
+import Plot from 'react-plotly.js';
 import './App.css';
 
 const DEFAULT_QUERY = 'wtf';
@@ -153,7 +154,46 @@ class App extends Component {
               </Cards>
           }
         </div>
+        <Map/>
       </div>
+    );
+  }
+}
+
+class Map extends Component {
+ 
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const data = [{
+      type:'scattergeo',
+      lat:['45.5017'],
+      lon:['-73.5673'],
+      mode:'markers',
+      marker: {
+        size:14
+      },
+      text:['Montreal']
+    }]
+
+    const layout = {
+      autosize: true,
+      hovermode:'closest',
+      mapbox: {
+        bearing:0,
+        center: {
+          lat:45,
+          lon:-73
+        },
+        pitch:0,
+        zoom:5
+      },
+    }
+
+    return (
+      <Plot data={data} layout={layout} />
     );
   }
 }
@@ -192,6 +232,7 @@ const Cards = ({
       <Card
         key={item.objectID}
         venue={item.venue.displayName}
+        city={item.location.city}
         date={item.start.date}
         //price={item.price}
       />
@@ -232,12 +273,13 @@ class Card extends Component {
     const {
       key,
       venue,
+      city,
       date,
       price,
     } = this.props;
 
     const color = this.hashToHex(this.stringToHash(venue));
-    console.log(color);
+    console.log(city);
 
     return(
       <div key={key} className="card" style={{backgroundColor: color}}>
@@ -245,6 +287,7 @@ class Card extends Component {
             <span className="venue">{venue}</span>
         </div>
         <div className="card-info">
+          <span className="city">CITY: {city}</span>
           <span className="date">DATE: {date}</span>
           <span className="price">PRICE: 10</span>
           <span className="buy-link">
