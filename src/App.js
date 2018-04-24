@@ -154,7 +154,10 @@ class App extends Component {
               </Cards>
           }
         </div>
-        <Map/>
+        { isLoading ? <Loading/> 
+          : <Map list={list} />
+        }
+        
       </div>
     );
   }
@@ -167,16 +170,30 @@ class Map extends Component {
   }
 
   render() {
+    const {
+      list
+    } = this.props;
+
     const data = [{
       type:'scattergeo',
-      lat:['45.5017'],
-      lon:['-73.5673'],
+      lat:[],
+      lon:[],
       mode:'markers',
       marker: {
         size:14
       },
-      text:['Montreal']
+      text:[]
     }]
+
+    // add location markers to map
+    if (Array.isArray(list) && list.length) {
+      console.log(list)
+      list.forEach(item => {
+        data[0].text.push(item.location.city);
+        data[0].lat.push(item.location.lat);
+        data[0].lon.push(item.location.lng);
+      });
+    }
 
     const layout = {
       autosize: true,
