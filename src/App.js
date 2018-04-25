@@ -147,6 +147,7 @@ class App extends Component {
           > 
             Search
           </Search>
+          {/* Need to add scrolling to venue list */}
           { isLoading ? <Loading/> 
             : <Cards
                 list={list}
@@ -154,6 +155,7 @@ class App extends Component {
               </Cards>
           }
         </div>
+        {/* Need to show map next to list instead of under it */}
         { isLoading ? <Loading/> 
           : <Map list={list} />
         }
@@ -167,6 +169,27 @@ class Map extends Component {
  
   constructor(props) {
     super(props);
+
+    // TODO: Need to refactor.
+    // Card class uses the same functions. 
+    this.stringToHash = this.stringToHash.bind(this);
+    this.hashToHex = this.hashToHex.bind(this);
+  }
+
+  stringToHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  }
+
+  hashToHex(i) {
+     let c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "#" + "00000".substring(0, 6 - c.length) + c;
   }
 
   render() {
@@ -176,37 +199,48 @@ class Map extends Component {
 
     const data = [{
       type:'scattergeo',
+      locationmode: 'USA-states',
       lat:[],
       lon:[],
       mode:'markers',
       marker: {
-        size:14
+        size: 14,
+        color: [],
+        opacity: 0.8,
+        // line: {
+        //       width: 10,
+        //       color: 'rgb(102,102,102)'
+        //   }
       },
-      text:[]
+      text:[],
+      hovertext: [],
+      hoverinfo: "text" // turn off hover info
     }]
 
-    // add location markers to map
+    // TODO: Put city name under venue name
     if (Array.isArray(list) && list.length) {
       console.log(list)
       list.forEach(item => {
         data[0].text.push(item.location.city);
         data[0].lat.push(item.location.lat);
         data[0].lon.push(item.location.lng);
+        data[0].marker.color.push(this.hashToHex(this.stringToHash(item.venue.displayName)));
+        data[0].hovertext.push(item.venue.displayName);      
       });
     }
 
     const layout = {
       autosize: true,
       hovermode:'closest',
-      mapbox: {
-        bearing:0,
-        center: {
-          lat:45,
-          lon:-73
-        },
-        pitch:0,
-        zoom:5
-      },
+      geo: {
+        scope: 'usa',
+        showland: true,
+        landcolor: 'rgb(250,250,250)',
+        subunitcolor: 'rgb(0,0,0)',
+        countrycolor: 'rgb(217,217,217)',
+        countrywidth: 0.5,
+        subunitwidth: 0.5
+      }
     }
 
     return (
@@ -251,7 +285,6 @@ const Cards = ({
         venue={item.venue.displayName}
         city={item.location.city}
         date={item.start.date}
-        //price={item.price}
       />
 
     )};
