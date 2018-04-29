@@ -108,7 +108,6 @@ class App extends Component {
     const { searchTerm } = this.state;
     this.setState({ searchKey : searchTerm });
     console.log(this.state.searchKey);
-    // TODO: Can't fetch. Need an API KEY from song kick. Use const list for now.
     
     if (this.needsToSearchTours(searchTerm)) {
       this.fetchArtistId(searchTerm);
@@ -147,7 +146,10 @@ class App extends Component {
           > 
             Search
           </Search>
-          {/* Need to add scrolling to venue list */}
+          {/* 
+          Need to add scrolling to venue list 
+          Reference: https://www.robinwieruch.de/react-infinite-scroll/ 
+          */}
           { isLoading ? <Loading/> 
             : <Cards
                 list={list}
@@ -155,9 +157,8 @@ class App extends Component {
               </Cards>
           }
         </div>
-        {/* Need to show map next to list instead of under it */}
-        { isLoading ? <Loading/> 
-          : <Map list={list} />
+        { !isLoading && list.length ? <Map list={list} />
+          : false
         }
         
       </div>
@@ -217,7 +218,6 @@ class Map extends Component {
       hoverinfo: "text" // turn off hover info
     }]
 
-    // TODO: Put city name under venue name
     if (Array.isArray(list) && list.length) {
       console.log(list)
       list.forEach(item => {
@@ -225,11 +225,13 @@ class Map extends Component {
         data[0].lat.push(item.location.lat);
         data[0].lon.push(item.location.lng);
         data[0].marker.color.push(this.hashToHex(this.stringToHash(item.venue.displayName)));
-        data[0].hovertext.push(item.venue.displayName);      
+        const info = item.venue.displayName + '<br>' + item.location.city;
+        data[0].hovertext.push(info);      
       });
     }
 
     const layout = {
+      title: 'US Tour Venue Locations',
       autosize: true,
       hovermode:'closest',
       geo: {
@@ -244,7 +246,9 @@ class Map extends Component {
     }
 
     return (
-      <Plot data={data} layout={layout} />
+      <div className="map">
+        <Plot data={data} layout={layout} />
+      </div>
     );
   }
 }
@@ -273,7 +277,7 @@ const Search = ({
     children: PropTypes.node.isRequired,
   }
 
-// TODO: How to change background color based on venue hash?
+// TODO: Bind hover event of markers to onHover of cards.
 const Cards = ({
   list,
 }) => 

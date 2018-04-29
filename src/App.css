@@ -30,12 +30,11 @@
 .cards {
   float: left;
   height: 'inherit';
-  overflow: 'auto';
+  width: 33%;
 }
 
 .map {
-  display: inline-block;
-
+  margin-left: 33%;
   position: fixed;
 }
 
