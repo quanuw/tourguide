@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
 import Plot from 'react-plotly.js';
+import Plotly from 'react-plotly.js';
 import './App.css';
 
 const DEFAULT_QUERY = 'wtf';
@@ -247,7 +248,7 @@ class Map extends Component {
 
     return (
       <div className="map">
-        <Plot data={data} layout={layout} />
+        <Plot id="plot" data={data} layout={layout} />
       </div>
     );
   }
@@ -278,6 +279,7 @@ const Search = ({
   }
 
 // TODO: Bind hover event of markers to onHover of cards.
+// refer: https://plot.ly/javascript/hover-events/#triggering-hover-events
 const Cards = ({
   list,
 }) => 
@@ -285,7 +287,8 @@ const Cards = ({
     {list.map(item => 
 
       <Card
-        key={item.objectID}
+        key={item.id}
+        id={item.id}
         venue={item.venue.displayName}
         city={item.location.city}
         date={item.start.date}
@@ -305,6 +308,9 @@ class Card extends Component {
 
     this.stringToHash = this.stringToHash.bind(this);
     this.hashToHex = this.hashToHex.bind(this);
+    this.onMouseOver = this.onMouseOver.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
+
   }
 
   stringToHash(str) {
@@ -323,9 +329,18 @@ class Card extends Component {
     return "#" + "00000".substring(0, 6 - c.length) + c;
   }
   
+  onMouseOver(event) {
+    //Plotly.Fx.hover('plot', [{x: 0, y: this.props.key}]);
+    console.log(this.props.id);
+  }
+
+  onMouseOut(event) {
+ 
+  }
+
   render() {
     const {
-      key,
+      id,
       venue,
       city,
       date,
@@ -333,10 +348,9 @@ class Card extends Component {
     } = this.props;
 
     const color = this.hashToHex(this.stringToHash(venue));
-    console.log(city);
 
     return(
-      <div key={key} className="card" style={{backgroundColor: color}}>
+      <div key={id} className="card" style={{backgroundColor: color}} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}>
         <div className="card-venue">
             <span className="venue">{venue}</span>
         </div>
