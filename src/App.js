@@ -57,12 +57,20 @@ class App extends Component {
       searchKey: 'LOLOL',
       error: null,
       isLoading: false,
+      center: {lat: 59.95, lng: 30.33},
     }
 
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.fetchTours = this.fetchTours.bind(this);
     this.needsToSearchTours = this.needsToSearchTours.bind(this);
+    this.onMouseOver = this.onMouseOver.bind(this);
+  }
+
+  onMouseOver(event, data) {
+    console.log(data);
+    const center = data; 
+    this.setState({ center })
   }
 
   // find artist id:
@@ -132,6 +140,8 @@ class App extends Component {
       results,
       error,
       isLoading,
+      center
+
     } = this.state;
 
     const list = (
@@ -139,7 +149,6 @@ class App extends Component {
       results[searchKey]
       ) || [];
 
-    const center = {lat: 59.95, lng: 30.33};
     const zoom = 11;
     return (
       <div className="App">
@@ -155,11 +164,14 @@ class App extends Component {
           Need to add scrolling to venue list 
           Reference: https://www.robinwieruch.de/react-infinite-scroll/ 
           */}
-          { isLoading ? <Loading/> 
-            : <Cards
-                list={list}
-              >
-              </Cards>
+          { isLoading ? <Loading/>
+            : false}
+          { !isLoading && list.length ? <Cards
+                                          list={list}
+                                          onHover={this.onMouseOver}
+                                        >
+                                        </Cards>
+                                        : false
           }
         </div>
         { !isLoading && list.length ? <Map center={center} zoom={zoom} list={list} />
@@ -220,8 +232,8 @@ class Map extends Component {
     return (
       <div className="map" style={{ height: '100%', width: '100%' }}>
           <GoogMapReact
-            defaultCenter={this.props.center}
-            defaultZoom={this.props.zoom}
+            center={this.props.center}
+            zoom={this.props.zoom}
           >
             {places}
 
@@ -277,26 +289,43 @@ const Search = ({
 
 // TODO: Bind hover event of markers to onHover of cards.
 // refer: https://plot.ly/javascript/hover-events/#triggering-hover-events
-const Cards = ({
-  list,
-}) => 
-  <div className="cards">
-    {list.map(item => 
+class Cards extends Component {
 
-      <Card
-        key={item.id}
-        id={item.id}
-        venue={item.venue.displayName}
-        city={item.location.city}
-        date={item.start.date}
-      />
+  constructor(props) {
+    super(props);
 
-    )};
-  </div>
-
-  Cards.PropTypes = {
-    list: PropTypes.array.isRequired
+    this.onMouseOver = this.onMouseOver.bind(this);
   }
+  
+  onMouseOver(event, data) {
+    this.props.onHover(event, data);
+  }
+  render() {
+    const { list } = this.props;
+    return (
+      <div className="cards">
+        {list.map(item => 
+
+          <Card
+            key={item.id}
+            id={item.id}
+            venue={item.venue.displayName}
+            city={item.location.city}
+            date={item.start.date}
+            lat={item.location.lat}
+            lng={item.location.lng}
+            onHover={this.onMouseOver}
+          />
+
+        )};
+      </div>
+    );
+  }
+}
+
+  // Cards.PropTypes = {
+  //   list: PropTypes.array.isRequired
+  // }
 
 class Card extends Component {
 
@@ -326,11 +355,12 @@ class Card extends Component {
     return "#" + "00000".substring(0, 6 - c.length) + c;
   }
   
-  onMouseOver(event) {
+  onMouseOver(event, data) {
     // TODO: Issue with subplots
     // Cannot read property '_subplot' of undefined
     //Plotly.Fx.hover('plot', [{curveNumber: 0, pointNumber: 0}]);
-    console.log(this.props.id);
+    const center = {lat: this.props.lat, lng: this.props.lng}
+    this.props.onHover(event, center);
   }
 
   onMouseOut(event) {
