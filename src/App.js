@@ -3,8 +3,10 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faSpinner from '@fortawesome/fontawesome-free-solid/faSpinner'
-import Plot from 'react-plotly.js';
-import Plotly from 'react-plotly.js';
+
+import GoogMapReact from 'google-map-react';
+import {markerStyle, markerStyleHover} from './marker_with_hover_styles.js';
+
 import './App.css';
 
 const DEFAULT_QUERY = 'wtf';
@@ -137,6 +139,8 @@ class App extends Component {
       results[searchKey]
       ) || [];
 
+    const center = {lat: 59.95, lng: 30.33};
+    const zoom = 11;
     return (
       <div className="App">
         <div className="interactions">
@@ -158,7 +162,7 @@ class App extends Component {
               </Cards>
           }
         </div>
-        { !isLoading && list.length ? <Map list={list} />
+        { !isLoading && list.length ? <Map center={center} zoom={zoom} list={list} />
           : false
         }
         
@@ -168,6 +172,10 @@ class App extends Component {
 }
 
 class Map extends Component {
+  static defaultProps = {
+    center: {lat: 59.95, lng: 30.33},
+    zoom: 11
+  };
  
   constructor(props) {
     super(props);
@@ -198,57 +206,46 @@ class Map extends Component {
     const {
       list
     } = this.props;
-
-    const data = [{
-      type:'scattergeo',
-      locationmode: 'USA-states',
-      lat:[],
-      lon:[],
-      mode:'markers',
-      marker: {
-        size: 14,
-        color: [],
-        opacity: 0.8,
-        // line: {
-        //       width: 10,
-        //       color: 'rgb(102,102,102)'
-        //   }
-      },
-      text:[],
-      hovertext: [],
-      hoverinfo: "text" // turn off hover info
-    }]
-
-    if (Array.isArray(list) && list.length) {
-      console.log(list)
-      list.forEach(item => {
-        data[0].text.push(item.location.city);
-        data[0].lat.push(item.location.lat);
-        data[0].lon.push(item.location.lng);
-        data[0].marker.color.push(this.hashToHex(this.stringToHash(item.venue.displayName)));
-        const info = item.venue.displayName + '<br>' + item.location.city;
-        data[0].hovertext.push(info);      
-      });
-    }
-
-    const layout = {
-      title: 'US Tour Venue Locations',
-      autosize: true,
-      hovermode:'closest',
-      geo: {
-        scope: 'usa',
-        showland: true,
-        landcolor: 'rgb(250,250,250)',
-        subunitcolor: 'rgb(0,0,0)',
-        countrycolor: 'rgb(217,217,217)',
-        countrywidth: 0.5,
-        subunitwidth: 0.5
-      }
-    }
+    
+    const places = list.map(item => 
+      <Marker
+        key={item.id}
+        id={item.id}
+        lat={item.location.lat}
+        lng={item.location.lng}
+        text={item.venue.displayName}
+      />
+    );
 
     return (
-      <div className="map">
-        <Plot id="plot" data={data} layout={layout} />
+      <div className="map" style={{ height: '100%', width: '100%' }}>
+          <GoogMapReact
+            defaultCenter={this.props.center}
+            defaultZoom={this.props.zoom}
+          >
+            {places}
+
+          </GoogMapReact>
+      </div>
+    );
+  }
+}
+
+class Marker extends Component {
+  static propTypes = {
+
+  }
+
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    const style = this.props.$hover ? markerStyleHover : markerStyle;
+
+    return (
+      <div key={this.props.id} style={style}>
+        {this.props.text}
       </div>
     );
   }
@@ -330,7 +327,9 @@ class Card extends Component {
   }
   
   onMouseOver(event) {
-    //Plotly.Fx.hover('plot', [{x: 0, y: this.props.key}]);
+    // TODO: Issue with subplots
+    // Cannot read property '_subplot' of undefined
+    //Plotly.Fx.hover('plot', [{curveNumber: 0, pointNumber: 0}]);
     console.log(this.props.id);
   }
 
