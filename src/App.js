@@ -17,22 +17,6 @@ const PATH_FORMAT = 'calendar.json';
 const PATH_API_KEY= 'apikey=';
 const PATH_QUERY = 'query='
 const API_KEY = 'GfkmyNpagiIxeyzZ';
-// const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
-
-const list = [
-  {
-    artist: "Fall Out Boy",
-    venue: "Paramount",
-    date: "04-09-18",
-    price: "10.00",
-  },
-  {
-    artist: "Taylor Swift",
-    venue: "Nemos",
-    date: "04-09-18",
-    price: "15.00",
-  }
-];
 
 const updateSearchToursState = (result) => (prevState) => {
   const { searchKey, results } = prevState;
@@ -184,6 +168,7 @@ class App extends Component {
 }
 
 class Map extends Component {
+
   static defaultProps = {
     center: {lat: 59.95, lng: 30.33},
     zoom: 11
@@ -219,21 +204,27 @@ class Map extends Component {
       list
     } = this.props;
     
+
     const places = list.map(item => 
       <Marker
         key={item.id}
         id={item.id}
         lat={item.location.lat}
         lng={item.location.lng}
-        text={item.venue.displayName}
+        venue={item.venue.displayName}
+        city={item.location.city}
+        date={item.start.date}
       />
     );
-
+    // TODO: Hover area seems to be off center.
     return (
       <div className="map" style={{ height: '100%', width: '100%' }}>
           <GoogMapReact
             center={this.props.center}
             zoom={this.props.zoom}
+            hoverDistance={75}
+            distanceToMouse={this._distanceToMouse}
+
           >
             {places}
 
@@ -254,12 +245,21 @@ class Marker extends Component {
 
   render() {
     const style = this.props.$hover ? markerStyleHover : markerStyle;
-
-    return (
-      <div key={this.props.id} style={style}>
-        {this.props.text}
-      </div>
-    );
+    if (!this.props.$hover) {
+      return (
+        <div key={this.props.id} style={markerStyle}>
+          {this.props.venue}
+        </div>
+      );
+    } else {
+      return (
+        <div key={this.props.id} style={markerStyleHover}>
+          {this.props.venue}
+          <span> {this.props.city} </span>
+          <span> {this.props.date} </span>
+        </div>
+      );
+    }
   }
 }
 
