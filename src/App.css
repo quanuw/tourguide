@@ -31,6 +31,8 @@
   float: left;
   height: 'inherit';
   width: 33%;
+  position: absolute;
+  top: 50px;
 }
 
 .map {
@@ -73,3 +75,13 @@
   padding-left: 10px;
 }
 
+.search {
+  width: 33%;
+  float: left;
+  position: relative;
+}
+
+.input {
+  width: 80%;
+  height: 100%;
+}

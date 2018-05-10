@@ -49,6 +49,7 @@ class App extends Component {
     this.fetchTours = this.fetchTours.bind(this);
     this.needsToSearchTours = this.needsToSearchTours.bind(this);
     this.onMouseOver = this.onMouseOver.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   onMouseOver(event, data) {
@@ -63,7 +64,7 @@ class App extends Component {
     this.setState({ isLoading: true });
     axios(`${PATH_BASE}search/artists.json?${PATH_API_KEY}${API_KEY}&${PATH_QUERY}${searchTerm}`)
       .then(result => this._isMounted && this.fetchTours(result.data))
-      .catch(error => this._isMounted && this.setState({ error }));
+      .catch(error => this._isMounted && this.handleError(error));
   }
 
   // TODO: Need to fetch twice.
@@ -75,9 +76,16 @@ class App extends Component {
     const artistId = res[0].id;
     axios(`${PATH_BASE}${PATH_ARTISTS}${artistId}/${PATH_FORMAT}?${PATH_API_KEY}${API_KEY}`) 
       .then(result => this._isMounted && this.setTours(result.data))
-      .catch(error => this._isMounted && this.setState({ error }));
+      .catch(error => this._isMounted && this.handleError(error));
       console.log(artistId);
       console.log(this._isMounted);
+  }
+
+  handleError(error) {
+    this.setState({ error });
+    if (error) {
+      this.setState({ isLoading: false});
+    }
   }
 
   componentDidMount() {
@@ -148,6 +156,8 @@ class App extends Component {
           Need to add scrolling to venue list 
           Reference: https://www.robinwieruch.de/react-infinite-scroll/ 
           */}
+          { error != null ? <p> {searchTerm} has no tours. </p>
+            : false}
           { isLoading ? <Loading/>
             : false}
           { !isLoading && list.length ? <Cards
@@ -269,16 +279,19 @@ const Search = ({
   onSubmit,
   children
 }) =>
-  <form onSubmit={onSubmit}> 
-    <input 
-      type="text" 
-      value={value} 
-      onChange={onChange} 
-    /> 
-    <button type="submit"> 
-      {children} 
-    </button> 
-  </form>
+  <div className="search">
+    <form onSubmit={onSubmit}> 
+      <input 
+        className="input"
+        type="text" 
+        value={value} 
+        onChange={onChange} 
+      /> 
+      <button type="submit"> 
+        {children} 
+      </button> 
+    </form>
+  </div>
 
   Search.PropTypes = {
     value: PropTypes.string,
