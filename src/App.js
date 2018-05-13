@@ -215,17 +215,40 @@ class Map extends Component {
     } = this.props;
     
 
-    const places = list.map(item => 
+ 
+    const places = {};
+    list.forEach(item => {
+      if (!places.hasOwnProperty(item.venue.displayName)) {
+        places[item.venue.displayName] = {
+          key: item.id,
+          id: item.id,
+          lat: item.location.lat,
+          lng: item.location.lng,
+          venue: item.venue.displayName,
+          city: item.location.city,
+          date: [item.start.date]
+        }
+      } else {
+        places[item.venue.displayName].date.push(item.start.date);
+      }
+    });
+
+    console.log(places);
+    console.log(Object.keys(places));
+    const markers = Object.keys(places).map(key => 
       <Marker
-        key={item.id}
-        id={item.id}
-        lat={item.location.lat}
-        lng={item.location.lng}
-        venue={item.venue.displayName}
-        city={item.location.city}
-        date={item.start.date}
+        key={places[key].key}
+        id={places[key].id}
+        lat={places[key].lat}
+        lng={places[key].lng}
+        venue={places[key].venue}
+        city={places[key].city}
+        date={places[key].date}
       />
     );
+    console.log(markers);
+    
+    // );
     // TODO: Hover area seems to be off center.
     return (
       <div className="map-wrapper">
@@ -237,7 +260,7 @@ class Map extends Component {
               distanceToMouse={this._distanceToMouse}
 
             >
-              {places}
+              {markers}
 
             </GoogMapReact>
         </div>
