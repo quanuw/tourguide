@@ -228,17 +228,19 @@ class Map extends Component {
     );
     // TODO: Hover area seems to be off center.
     return (
-      <div className="map" style={{ height: '100%', width: '100%' }}>
-          <GoogMapReact
-            center={this.props.center}
-            zoom={this.props.zoom}
-            hoverDistance={75}
-            distanceToMouse={this._distanceToMouse}
+      <div className="map-wrapper">
+        <div className="map">
+            <GoogMapReact
+              center={this.props.center}
+              zoom={this.props.zoom}
+              hoverDistance={75}
+              distanceToMouse={this._distanceToMouse}
 
-          >
-            {places}
+            >
+              {places}
 
-          </GoogMapReact>
+            </GoogMapReact>
+        </div>
       </div>
     );
   }
@@ -279,18 +281,20 @@ const Search = ({
   onSubmit,
   children
 }) =>
-  <div className="search">
-    <form onSubmit={onSubmit}> 
-      <input 
-        className="input"
-        type="text" 
-        value={value} 
-        onChange={onChange} 
-      /> 
-      <button type="submit"> 
-        {children} 
-      </button> 
-    </form>
+  <div className="search-wrapper">
+    <div className="search">
+      <form onSubmit={onSubmit}> 
+        <input 
+          className="input"
+          type="text" 
+          value={value} 
+          onChange={onChange} 
+        /> 
+        <button type="submit"> 
+          {children} 
+        </button> 
+      </form>
+    </div>
   </div>
 
   Search.PropTypes = {

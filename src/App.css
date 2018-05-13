@@ -29,24 +29,35 @@
 
 .cards {
   float: left;
-  height: 'inherit';
+  height: inherit;
   width: 33%;
-  position: absolute;
+  position: relative;
+  /*z-index: 0;*/
   top: 50px;
 }
 
 .map {
-  margin-left: 33%;
+  height: 100%;
+  width: 100%;
+  /*margin-left: 33%;*/
   position: fixed;
+  /*display: flex;*/
+
 }
 
+.map-wrapper {
+  /*position: relative;*/
+  height: 100%;
+  width: inherit;
+  display: flex;
+}
 .card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0,0.2);
   transition: 0.3s;
   width: 100%;
   padding-top: 10px;
   padding-bottom: 10px;
-  position: center;
+  /*position: center;*/
   
 }
 
@@ -77,8 +88,16 @@
 
 .search {
   width: 33%;
-  float: left;
-  position: relative;
+  /*float: left;*/
+  height: 50px;
+  position: fixed;
+  z-index: 1;
+  background-color: white;
+}
+
+.search-wrapper {
+  /*height: 50px;*/
+  /*width: 33%;*/
 }
 
 .input {
